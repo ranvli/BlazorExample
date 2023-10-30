@@ -1,0 +1,19 @@
+1. Abrir PMC (Package Manager Console) haciendo click en Tools->Nuget Package Manager->Package Manager Console
+
+2. Posicionarse en el path raíz del proyecto.
+	Para saber en qué path estás actualmente digita el comando PWD
+	Tienes que estar en \FullApp en el path que está ubicado Dockerfile
+
+3. Ejecuta 
+	
+	docker build -t "fullapp" . 
+
+(tomará varios minutos dependiendo de los recursos disponibles en tu PC)
+
+4. Para iniciar el app del contenedor digita el comando ejecuta:
+
+	docker run -p 8880:80 --name MyFullApp fullapp
+
+	Eso mapeará tu puerto local de tu máquina 8880 al puerto 80 del contenedor.
+
+5. Ejecuta tu app desde cualquier navegador digitando: http://localhost:8080

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>FullApp</title>
+    <base href="/" />
+    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/app.css" rel="stylesheet" />
+    <link href="FullApp.Client.styles.css" rel="stylesheet" />
+
+    <script>
+        window.mostrarModal = () => {
+            var modal = document.querySelector('.modal');
+            if (modal) {
+                modal.style.display = 'block';
+            }
+        };
+
+        window.ocultarModal = () => {
+            var modal = document.querySelector('.modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        };
+    </script>
+
+</head>
+
+
+<body>
+    <div id="app">Cargando...</div>
+
+    <div id="blazor-error-ui">
+        Ha ocurrido un error.
+        <a href="" class="reload">Recargar</a>
+        <a class="dismiss">🗙</a>
+    </div>
+    <script src="_framework/blazor.webassembly.js"></script>
+</body>
+
+</html>

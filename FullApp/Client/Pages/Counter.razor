@@ -1,0 +1,18 @@
+﻿@page "/counter"
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Ejemplo de contador en blazor</h1>
+
+<p role="status">Contador actual = @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Sumar</button>
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+}

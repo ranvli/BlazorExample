@@ -1,0 +1,153 @@
+﻿@page "/usuarios"
+@using FullApp.Shared
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime
+@using Microsoft.JSInterop
+@using Microsoft.AspNetCore.Components.Forms
+@using System.Net.Http.Json
+ 
+
+<PageTitle>Usuarios</PageTitle>
+
+<h1>Lista de usuarios (dummy data en base de datos)</h1>
+
+<p>Aquí se muestra cómo obtener datos en base de datos del servidor.</p>
+
+@if (usuarios == null)
+{
+    <p><em>No hay usuarios...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Primer apellido</th>
+                <th>Segundo apellido</th>
+                <th>Teléfono móvil</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var usuario in usuarios)
+            {
+                <tr>
+                    <td>@usuario.Id</td>
+                    <td>@usuario.Nombre</td>
+                    <td>@usuario.Apellido1</td>
+                    <td>@usuario.Apellido2</td>
+                    <td>@usuario.TelefonoMovil</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" @onclick="() => MostrarModalEditarUsuario(usuario)">Editar</button>
+                        <button class="btn btn-danger btn-sm" @onclick="() => EliminarUsuario(usuario.Id)">Borrar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<button class="btn btn-success" @onclick="MostrarModalCrearUsuario">Crear Usuario</button>
+
+<!-- Ventana modal -->
+<div class="modal" tabindex="-1" role="dialog" style="display: none;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Crear/Editar Usuario</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar" @onclick="OcultarModal">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Contenido del formulario -->
+                @if (usuarioSeleccionado != null)
+                {
+                    <div class="form-group">
+                        <label for="nombre">Nombre:</label>
+                        <input type="text" class="form-control" id="nombre" @bind="usuarioSeleccionado.Nombre" />
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido1">Primer Apellido:</label>
+                        <input type="text" class="form-control" id="apellido1" @bind="usuarioSeleccionado.Apellido1" />
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido2">Segundo Apellido:</label>
+                        <input type="text" class="form-control" id="apellido2" @bind="usuarioSeleccionado.Apellido2" />
+                    </div>
+                    <div class="form-group">
+                        <label for="telefonoMovil">Teléfono Móvil:</label>
+                        <input type="text" class="form-control" id="telefonoMovil" @bind="usuarioSeleccionado.TelefonoMovil" />
+                    </div>
+                }
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" @onclick="OcultarModal">Cerrar</button>
+                <button type="button" class="btn btn-primary" @onclick="CrearEditarUsuario">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private Usuario[] usuarios;
+    private bool mostrarModal;
+    private Usuario usuarioSeleccionado;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarUsuarios();
+    }
+
+    private async Task CargarUsuarios()
+    {
+        usuarios = await Http.GetFromJsonAsync<Usuario[]>("usuario");
+    }
+
+    private async Task MostrarModalCrearUsuario()
+    {
+        usuarioSeleccionado = new Usuario(); // Reiniciar el usuario seleccionado
+        mostrarModal = true;
+        await JSRuntime.InvokeVoidAsync("mostrarModal"); // Llama a la función JavaScript para mostrar la ventana modal
+    }
+
+    private async Task MostrarModalEditarUsuario(Usuario usuario)
+    {
+        usuarioSeleccionado = usuario; // Establecer el usuario seleccionado para editar
+        mostrarModal = true;
+        await JSRuntime.InvokeVoidAsync("mostrarModal"); // Llama a la función JavaScript para mostrar la ventana modal
+    }
+
+    private async Task OcultarModal()
+    {
+        mostrarModal = false;
+        await JSRuntime.InvokeVoidAsync("ocultarModal"); // Llama a la función JavaScript para ocultar la ventana modal
+    }
+
+    private async Task CrearEditarUsuario()
+    {
+        if (usuarioSeleccionado.Id == 0)
+        {
+            // Lógica para crear un nuevo usuario
+            await Http.PostAsJsonAsync("usuario", usuarioSeleccionado);
+        }
+        else
+        {
+            // Lógica para actualizar un usuario existente
+            await Http.PutAsJsonAsync($"usuario/{usuarioSeleccionado.Id}", usuarioSeleccionado);
+        }
+
+        await OcultarModal();
+        await CargarUsuarios(); // Volver a cargar la lista de usuarios después de crear/editar
+    }
+
+    private async Task EliminarUsuario(int usuarioId)
+    {
+        // Lógica para eliminar un usuario por su ID
+        await Http.DeleteAsync($"usuario/{usuarioId}");
+        await CargarUsuarios(); // Volver a cargar la lista de usuarios después de eliminar
+    }
+}

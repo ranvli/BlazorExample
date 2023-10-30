@@ -1,0 +1,42 @@
+﻿@page
+@model FullApp.Server.Pages.ErrorModel
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Error</title>
+    <link href="~/css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/app.css" rel="stylesheet" asp-append-version="true" />
+</head>
+
+<body>
+    <div class="main">
+        <div class="content px-4">
+            <h1 class="text-danger">Error.</h1>
+            <h2 class="text-danger">Un error ha ocurrido por mientras se procesaba su solicitud.</h2>
+
+            @if (Model.ShowRequestId)
+            {
+                <p>
+                    <strong>Request ID:</strong> <code>@Model.RequestId</code>
+                </p>
+            }
+
+            <h3>Modo de desarrollo</h3>
+            <p>
+                Al cambiar al entorno de <strong>Desarrollo</strong>, se muestra información detallada sobre el error que ocurrió.
+            </p>
+            <p>
+                <strong>El entorno de desarrollo no debe estar habilitado para las aplicaciones implementadas.</strong>
+                Puede resultar en la visualización de información confidencial de excepciones a los usuarios finales.
+                Para la depuración local, habilite el entorno de <strong>Desarrollo</strong> configurando la variable de entorno <strong>ASPNETCORE_ENVIRONMENT</strong> en <strong>Desarrollo</strong>
+                y reiniciar la aplicación.
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>
